@@ -1,0 +1,6 @@
+{
+  "name": "Kho Ảnh Gia Đình Có Chú Thích",
+  "description": "Kho lưu trữ, kiểm kê và trưng bày tư liệu ảnh gia đình theo chuẩn Dublin Core và Luật Di sản văn hoá.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
