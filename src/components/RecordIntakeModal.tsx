@@ -121,13 +121,13 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
       aria-modal="true"
       aria-labelledby="modal-intake-title"
     >
-      <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg border border-stone-200 bg-[#FBF9F5] p-6 shadow-xl">
+      <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg border border-stone-200 bg-[#FBF9F5] p-4 shadow-xl sm:p-6">
         <div className="flex items-start justify-between gap-4 border-b border-stone-200 pb-4">
-          <div>
+          <div className="min-w-0">
             <h2 id="modal-intake-title" className="font-editorial text-2xl font-semibold text-stone-900">
               Nạp bản ghi tư liệu thật vào tulieu.json
             </h2>
-            <p className="mt-1 text-sm text-stone-600">
+            <p className="mt-1 text-base text-stone-700">
               Ảnh tải lên sẽ tự động giảm kích thước để hiển thị web và lưu vào thư mục anh_tu_lieu. Bản quét gốc độ phân giải cao cần được sao lưu riêng ngoại tuyến.
             </p>
           </div>
@@ -135,7 +135,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
             type="button"
             aria-label="Đóng biểu mẫu nhập tư liệu"
             onClick={onClose}
-            className="inline-flex min-h-[40px] min-w-[40px] cursor-pointer items-center justify-center rounded-md border border-stone-200 bg-white text-stone-700 hover:bg-stone-100"
+            className="inline-flex min-h-[44px] min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-md border border-stone-200 bg-white text-stone-700 hover:bg-stone-100"
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -143,7 +143,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           {errorMsg && (
-            <div role="alert" className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-900">
+            <div role="alert" className="rounded-md border border-red-300 bg-red-50 p-3 text-base text-red-900">
               {errorMsg}
             </div>
           )}
@@ -160,7 +160,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 value={form.dc_title}
                 onChange={(e) => updateField('dc_title', e.target.value)}
                 placeholder="Ví dụ: Ảnh đại gia đình Tết Bính Thìn 1976"
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
             </div>
 
@@ -172,7 +172,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 id="intake-decade"
                 value={form.thap_nien}
                 onChange={(e) => updateField('thap_nien', e.target.value)}
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               >
                 <option value="">Chọn thập niên</option>
                 {DECADE_OPTIONS.filter((d) => d !== 'Tất cả').map((d) => (
@@ -193,7 +193,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 value={form.dc_identifier}
                 onChange={(e) => updateField('dc_identifier', e.target.value)}
                 placeholder="Ví dụ: GD-1976-001"
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 font-mono text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 font-mono text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
             </div>
 
@@ -207,7 +207,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 value={form.dc_date}
                 onChange={(e) => updateField('dc_date', e.target.value)}
                 placeholder="Ví dụ: Khoảng năm 1976 (chưa rõ ngày)"
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
             </div>
 
@@ -222,7 +222,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 value={form.noi_luu_giu_hien_nay}
                 onChange={(e) => updateField('noi_luu_giu_hien_nay', e.target.value)}
                 placeholder="Ví dụ: Album gia đình tại nhà ông/bà..."
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
             </div>
 
@@ -236,7 +236,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 value={form.noi_luu_giu_thoi_diem_tu_lieu}
                 onChange={(e) => updateField('noi_luu_giu_thoi_diem_tu_lieu', e.target.value)}
                 placeholder="Địa chỉ / gia đình giữ ảnh khi mới chụp"
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
             </div>
 
@@ -248,7 +248,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 id="intake-copy-type"
                 value={form.loai_ban_dang_hien_thi}
                 onChange={(e) => updateField('loai_ban_dang_hien_thi', e.target.value as DisplayCopyType)}
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               >
                 <option value="">Chọn loại bản</option>
                 <option value="Bản số">Bản số (số hoá từ bản gốc gia đình)</option>
@@ -267,7 +267,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 value={form.tinh_trang_ban_goc}
                 onChange={(e) => updateField('tinh_trang_ban_goc', e.target.value)}
                 placeholder="Ví dụ: Ảnh giấy đen trắng, ố vàng nhẹ ở mép"
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
             </div>
 
@@ -281,7 +281,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 value={form.nguoi_cho_phep_cong_bo}
                 onChange={(e) => updateField('nguoi_cho_phep_cong_bo', e.target.value)}
                 placeholder="Để trống nếu đang chờ xác nhận quyền công bố"
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
               <p className="mt-1 text-xs text-stone-500">
                 Nếu để trống trường này, hệ thống sẽ ẩn ảnh và hiện thông báo chờ xác nhận quyền.
@@ -298,7 +298,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 value={form.pham_vi_duoc_phep}
                 onChange={(e) => updateField('pham_vi_duoc_phep', e.target.value)}
                 placeholder="Ví dụ: Trưng bày học tập, phi thương mại"
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
             </div>
           </div>
@@ -324,7 +324,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                   value={form.dc_creator}
                   onChange={(e) => updateField('dc_creator', e.target.value)}
                   placeholder="Ví dụ: Ông bà nội cùng các cô chú (người chụp: Bác Ba)"
-                  className="mt-1 w-full rounded-md border border-stone-300 bg-[#FBF9F5] px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                  className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-[#FBF9F5] px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
                 />
               </div>
 
@@ -341,7 +341,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                     updateField('dc_contributor', e.target.value);
                   }}
                   placeholder="Ví dụ: Bà Nguyễn Thị Lan kể lại ngày..."
-                  className="mt-1 w-full rounded-md border border-stone-300 bg-[#FBF9F5] px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                  className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-[#FBF9F5] px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
                 />
               </div>
 
@@ -355,7 +355,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                   value={form.phan_chua_xac_dinh}
                   onChange={(e) => updateField('phan_chua_xac_dinh', e.target.value)}
                   placeholder="Ví dụ: Chưa rõ tên hai người đứng hàng sau bên trái và ngày chụp"
-                  className="mt-1 w-full rounded-md border border-stone-300 bg-[#FBF9F5] px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                  className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-[#FBF9F5] px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
                 />
               </div>
 
@@ -369,7 +369,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                   value={form.dc_coverage}
                   onChange={(e) => updateField('dc_coverage', e.target.value)}
                   placeholder="Ví dụ: Sân nhà cũ ở Hà Nội · Tết 1976"
-                  className="mt-1 w-full rounded-md border border-stone-300 bg-[#FBF9F5] px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                  className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-[#FBF9F5] px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
                 />
               </div>
             </div>
@@ -384,7 +384,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 value={form.dc_description}
                 onChange={(e) => updateField('dc_description', e.target.value)}
                 placeholder="Ghi rõ ai đứng ở vị trí nào, chụp ở đâu, vào dịp nào theo lời kể của người lớn tuổi..."
-                className="mt-1 w-full rounded-md border border-stone-300 bg-[#FBF9F5] px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-[#FBF9F5] px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
             </div>
           </div>
@@ -399,7 +399,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 type="text"
                 value={form.dc_source}
                 onChange={(e) => updateField('dc_source', e.target.value)}
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
             </div>
 
@@ -413,7 +413,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 value={form.dc_subject}
                 onChange={(e) => updateField('dc_subject', e.target.value)}
                 placeholder="Ví dụ: Ảnh gia đình; Hà Nội; Di sản tư liệu"
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
             </div>
 
@@ -427,7 +427,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 value={form.phan_khong_cong_bo}
                 onChange={(e) => updateField('phan_khong_cong_bo', e.target.value)}
                 placeholder="Ghi chú phần người giữ dặn không công bố"
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               />
             </div>
 
@@ -439,7 +439,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 id="intake-verify"
                 value={form.muc_kiem_chung}
                 onChange={(e) => updateField('muc_kiem_chung', e.target.value as VerificationLevel)}
-                className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:border-[#9A3412] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-900 focus:border-[#9A3412] focus:outline-none"
               >
                 <option value="Chưa kiểm">Chưa kiểm</option>
                 <option value="Đã có người kiểm">Đã kiểm (Đã có người kiểm)</option>
@@ -453,8 +453,8 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
               Đính kèm ảnh tư liệu thật (tự động nén bản hiển thị web)
             </h3>
             <div className="mt-3 flex flex-wrap gap-3">
-              <label className="inline-flex min-h-[40px] cursor-pointer items-center gap-2 rounded-md border border-stone-300 bg-[#FBF9F5] px-3.5 py-2 text-sm font-medium text-stone-800 hover:bg-stone-100">
-                <ImagePlus className="h-4 w-4" aria-hidden="true" />
+              <label className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-md border border-stone-300 bg-[#FBF9F5] px-4 py-2 text-base font-medium text-stone-800 hover:bg-stone-100">
+                <ImagePlus className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>Chọn ảnh toàn trang</span>
                 <input
                   type="file"
@@ -464,8 +464,8 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                 />
               </label>
 
-              <label className="inline-flex min-h-[40px] cursor-pointer items-center gap-2 rounded-md border border-stone-300 bg-[#FBF9F5] px-3.5 py-2 text-sm font-medium text-stone-800 hover:bg-stone-100">
-                <ImagePlus className="h-4 w-4" aria-hidden="true" />
+              <label className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-md border border-stone-300 bg-[#FBF9F5] px-4 py-2 text-base font-medium text-stone-800 hover:bg-stone-100">
+                <ImagePlus className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>Chọn ảnh cận cảnh / mặt sau</span>
                 <input
                   type="file"
@@ -491,7 +491,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                       />
                     </div>
                     <div className="space-y-2 sm:col-span-9">
-                      <p className="font-mono text-xs text-stone-600">
+                      <p className="font-mono text-xs text-stone-600 break-words">
                         {img.loai_khung === 'toan_trang' ? 'Ảnh toàn trang' : 'Ảnh cận cảnh'} · {img.filename}
                       </p>
                       <input
@@ -504,7 +504,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                             prev.map((item, i) => (i === idx ? { ...item, chu_thich: val } : item))
                           );
                         }}
-                        className="w-full rounded border border-stone-300 bg-white px-2.5 py-1.5 text-sm"
+                        className="min-h-[44px] w-full rounded border border-stone-300 bg-white px-3 py-2 text-base"
                       />
                       <input
                         type="text"
@@ -516,7 +516,7 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
                             prev.map((item, i) => (i === idx ? { ...item, nguon: val } : item))
                           );
                         }}
-                        className="w-full rounded border border-stone-300 bg-white px-2.5 py-1.5 text-sm"
+                        className="min-h-[44px] w-full rounded border border-stone-300 bg-white px-3 py-2 text-base"
                       />
                     </div>
                   </div>
@@ -529,14 +529,14 @@ export function RecordIntakeModal({ isOpen, onClose, onSaveRecord }: RecordIntak
             <button
               type="button"
               onClick={onClose}
-              className="min-h-[42px] cursor-pointer rounded-md border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100"
+              className="min-h-[44px] cursor-pointer rounded-md border border-stone-300 bg-white px-4 py-2 text-base font-medium text-stone-700 hover:bg-stone-100"
             >
               Huỷ bỏ
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="min-h-[42px] cursor-pointer rounded-md bg-[#9A3412] px-5 py-2 text-sm font-medium text-white hover:bg-[#7C2D12] disabled:opacity-50"
+              className="min-h-[44px] cursor-pointer rounded-md bg-[#9A3412] px-5 py-2 text-base font-medium text-white hover:bg-[#7C2D12] disabled:opacity-50"
             >
               {submitting ? 'Đang lưu...' : 'Lưu vào tulieu.json'}
             </button>

@@ -1,4 +1,11 @@
-import type { ArchivalRecord, TuLieuDataset, VerificationLevel } from '../types/archive.ts';
+import type {
+  ArchivalRecord,
+  QAResponse,
+  QASuggestedSource,
+  SourceReference,
+  TuLieuDataset,
+  VerificationLevel,
+} from '../types/archive.ts';
 
 export const DECADE_OPTIONS = [
   'Tất cả',
@@ -367,4 +374,138 @@ export function groupRecordsByDecade(records: ArchivalRecord[]): Record<string, 
     counts[key] = (counts[key] ?? 0) + 1;
   }
   return counts;
+}
+
+export function getNonEmptyDecades(
+  records: ArchivalRecord[]
+): Array<{ decade: string; count: number }> {
+  const counts = groupRecordsByDecade(records);
+  const orderedKeys = [
+    ...DECADE_OPTIONS.filter((d) => d !== 'Tất cả' && d !== 'Chưa xác định'),
+    ...Object.keys(counts).filter(
+      (k) => k !== 'Chưa xác định' && !(DECADE_OPTIONS as readonly string[]).includes(k)
+    ),
+  ];
+
+  return orderedKeys
+    .map((decade) => ({ decade, count: counts[decade] ?? 0 }))
+    .filter((item) => item.count > 0);
+}
+
+export function sanitizeSecretPatterns(text: string): string {
+  return (text || '')
+    .replace(/AIza[0-9A-Za-z_-]{16,}/g, '[ĐÃ_ẨN_KHOÁ]')
+    .replace(/(Bearer\s+)[A-Za-z0-9._-]+/gi, '$1[ĐÃ_ẨN_TOKEN]')
+    .replace(/([?&]key=)[^&\s]+/gi, '$1[ĐÃ_ẨN_KHOÁ]');
+}
+
+export function getOfficialSuggestedSources(
+  sources: SourceReference[],
+  limit = 4
+): QASuggestedSource[] {
+  const preferred = sources.filter(
+    (s) =>
+      s.category === 'Nguồn tư liệu Hoàng Vân' ||
+      s.category.startsWith('Chính thống')
+  );
+  return preferred.slice(0, limit).map((s) => ({
+    title: s.title,
+    issuer: s.issuer,
+    year: s.year || '',
+    url: s.url,
+  }));
+}
+
+export function finalizeQAResponse(
+  rawParsed: Partial<QAResponse>,
+  records: ArchivalRecord[],
+  officialSources: SourceReference[]
+): QAResponse {
+  const hasMatch = Boolean(rawParsed.hasMatch);
+  const officialUrlMap = new Map(officialSources.map((s) => [s.url, s]));
+
+  const citations = Array.isArray(rawParsed.citations)
+    ? rawParsed.citations.map((cite) => {
+        const matchedRec = records.find(
+          (r) =>
+            r.dc_identifier === cite.ma_ban_ghi || r.so_dang_ky === cite.ma_ban_ghi
+        );
+        return {
+          ma_ban_ghi: cite.ma_ban_ghi || matchedRec?.dc_identifier || 'Chưa cấp mã',
+          noi_luu_giu:
+            cite.noi_luu_giu || matchedRec?.noi_luu_giu_hien_nay || 'Chưa ghi nhận',
+          loai_ban:
+            cite.loai_ban || matchedRec?.loai_ban_dang_hien_thi || 'Chưa rõ loại bản',
+          ten_nguon:
+            cite.ten_nguon ||
+            matchedRec?.dc_source ||
+            matchedRec?.dc_publisher ||
+            'Hồ sơ tulieu.json trong ứng dụng',
+        };
+      })
+    : [];
+
+  const rawUsed = Array.isArray(rawParsed.usedSources)
+    ? rawParsed.usedSources.filter((s) => typeof s === 'string' && s.trim().length > 0)
+    : [];
+
+  const derivedUsed =
+    rawUsed.length > 0
+      ? rawUsed
+      : citations.length > 0
+        ? Array.from(new Set(citations.map((c) => c.ten_nguon)))
+        : hasMatch
+          ? ['Kho dữ liệu tulieu.json — Bộ sưu tập tài liệu của nhạc sĩ Hoàng Vân']
+          : [];
+
+  let answer = (rawParsed.answer || '').trim();
+
+  if (!hasMatch) {
+    if (!answer.toLowerCase().includes('ứng dụng chưa có thông tin này')) {
+      answer = answer
+        ? `Ứng dụng chưa có thông tin này. ${answer}`
+        : 'Ứng dụng chưa có thông tin này trong kho dữ liệu hiện có (tulieu.json). Bạn có thể tra cứu thêm tại các nguồn chính thống được gợi ý bên dưới.';
+    }
+    const validSuggested = Array.isArray(rawParsed.suggestedSources)
+      ? rawParsed.suggestedSources
+          .filter((s) => s && typeof s.url === 'string' && officialUrlMap.has(s.url))
+          .map((s) => {
+            const official = officialUrlMap.get(s.url)!;
+            return {
+              title: official.title,
+              issuer: official.issuer,
+              year: official.year,
+              url: official.url,
+            };
+          })
+      : [];
+
+    const suggestedSources =
+      validSuggested.length > 0
+        ? validSuggested
+        : getOfficialSuggestedSources(officialSources, 4);
+
+    return {
+      answer,
+      hasMatch: false,
+      citations: [],
+      usedSources:
+        derivedUsed.length > 0
+          ? derivedUsed
+          : ['Kho dữ liệu tulieu.json (đã kiểm tra toàn bộ bản ghi hiện có)'],
+      suggestedSources,
+      totalRecordsChecked: records.length,
+    };
+  }
+
+  return {
+    answer:
+      answer ||
+      'Đã tìm thấy tư liệu phù hợp trong tulieu.json. Vui lòng xem trích dẫn nguồn bên dưới.',
+    hasMatch: true,
+    citations,
+    usedSources: derivedUsed,
+    suggestedSources: [],
+    totalRecordsChecked: records.length,
+  };
 }

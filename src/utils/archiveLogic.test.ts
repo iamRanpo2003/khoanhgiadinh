@@ -4,14 +4,19 @@ import {
   countMissingRequiredFields,
   createEmptyArchivalRecord,
   filterArchivalRecords,
+  finalizeQAResponse,
+  getNonEmptyDecades,
+  getOfficialSuggestedSources,
   getVerificationBadgeMeta,
   groupRecordsByDecade,
   hasPublishPermission,
   matchesOriginalCondition,
   normalizeVietnameseSearchText,
   sanitizeRecordForPublicContext,
+  sanitizeSecretPatterns,
   validateImportedDataset,
 } from './archiveLogic';
+import { ARCHIVAL_SOURCES } from '../data/sources';
 
 test('createEmptyArchivalRecord provides all 15 Dublin Core and supplementary fields', () => {
   const empty = createEmptyArchivalRecord();
@@ -186,4 +191,93 @@ test('countMissingRequiredFields and groupRecordsByDecade compute accurate count
   const grouped = groupRecordsByDecade([{ ...rec, thap_nien: '1970s' }]);
   assert.equal(grouped['1970s'], 1);
   assert.equal(grouped['1980s'], 0);
+
+  const nonEmpty = getNonEmptyDecades([
+    { ...rec, thap_nien: '1970s' },
+    { ...rec, thap_nien: '1950s' },
+    { ...rec, thap_nien: '1970s' },
+    { ...rec, thap_nien: 'Chưa xác định' },
+    { ...rec, thap_nien: '' },
+  ]);
+  assert.deepEqual(nonEmpty, [
+    { decade: '1950s', count: 1 },
+    { decade: '1970s', count: 2 },
+  ]);
+  assert.deepEqual(getNonEmptyDecades([]), []);
+});
+
+test('sanitizeSecretPatterns redacts Google API keys, bearer tokens, and key query params', () => {
+  const dirty =
+    'Fetch failed at https://example.com/v1?key=AIzaSyTestFakeKey1234567890 with Bearer secret_token.abc-123 and AIzaSyAnotherFakeKey987654321';
+  const cleaned = sanitizeSecretPatterns(dirty);
+  assert.equal(cleaned.includes('AIzaSy'), false);
+  assert.equal(cleaned.includes('secret_token'), false);
+  assert.ok(cleaned.includes('[ĐÃ_ẨN_KHOÁ]'));
+  assert.ok(cleaned.includes('[ĐÃ_ẨN_TOKEN]'));
+});
+
+test('finalizeQAResponse enforces missing-info phrase and strips non-catalog suggested URLs', () => {
+  const rec = {
+    ...createEmptyArchivalRecord(),
+    dc_identifier: 'HV-KUTG-2025-001',
+    dc_title: 'Bản thảo Hò kéo pháo (1953)',
+    dc_source: 'Gia đình nhạc sĩ Hoàng Vân · https://hoangvan.org/',
+    noi_luu_giu_hien_nay: 'Gia đình nhạc sĩ Hoàng Vân, Hà Nội',
+    loai_ban_dang_hien_thi: 'Bản số' as const,
+  };
+
+  const missingResult = finalizeQAResponse(
+    {
+      hasMatch: false,
+      answer: 'Không thấy thông tin về bài Tiến quân ca.',
+      suggestedSources: [
+        {
+          title: 'Nguồn bịa không có trong danh mục',
+          issuer: 'Unknown',
+          year: '2025',
+          url: 'https://fabricated-example.invalid/doc',
+        },
+      ],
+    },
+    [rec],
+    ARCHIVAL_SOURCES
+  );
+
+  assert.equal(missingResult.hasMatch, false);
+  assert.ok(missingResult.answer.startsWith('Ứng dụng chưa có thông tin này.'));
+  assert.ok(missingResult.suggestedSources.length > 0);
+  assert.equal(
+    missingResult.suggestedSources.some((s) => s.url.includes('fabricated-example.invalid')),
+    false
+  );
+  assert.ok(
+    missingResult.suggestedSources.every((s) =>
+      ARCHIVAL_SOURCES.some((official) => official.url === s.url)
+    )
+  );
+
+  const matchedResult = finalizeQAResponse(
+    {
+      hasMatch: true,
+      answer: 'Tư liệu Hò kéo pháo được ghi nhận năm 1953.',
+      citations: [
+        {
+          ma_ban_ghi: 'HV-KUTG-2025-001',
+          noi_luu_giu: '',
+          loai_ban: '',
+          ten_nguon: '',
+        },
+      ],
+    },
+    [rec],
+    ARCHIVAL_SOURCES
+  );
+
+  assert.equal(matchedResult.hasMatch, true);
+  assert.equal(matchedResult.citations[0].noi_luu_giu, 'Gia đình nhạc sĩ Hoàng Vân, Hà Nội');
+  assert.equal(matchedResult.citations[0].ten_nguon, 'Gia đình nhạc sĩ Hoàng Vân · https://hoangvan.org/');
+  assert.deepEqual(matchedResult.usedSources, ['Gia đình nhạc sĩ Hoàng Vân · https://hoangvan.org/']);
+
+  const officialSuggested = getOfficialSuggestedSources(ARCHIVAL_SOURCES, 3);
+  assert.equal(officialSuggested.length, 3);
 });

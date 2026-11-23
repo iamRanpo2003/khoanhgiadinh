@@ -27,11 +27,11 @@ export function Header({ activeScreen, onNavigate, onExport }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-stone-200 bg-[#FBF9F5]/95 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-8 px-4 py-3.5 sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:gap-8 sm:px-6 sm:py-3.5">
         <button
           type="button"
           onClick={() => handleNavClick('home')}
-          className="font-editorial cursor-pointer text-left text-xl font-semibold tracking-tight text-stone-900 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9A3412]"
+          className="font-editorial min-h-[44px] cursor-pointer text-left text-xl font-semibold tracking-tight text-stone-900 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9A3412]"
         >
           Kho Ảnh Gia Đình
         </button>
@@ -49,7 +49,7 @@ export function Header({ activeScreen, onNavigate, onExport }: HeaderProps) {
                 key={item.id}
                 type="button"
                 onClick={() => handleNavClick(item.id)}
-                className={`cursor-pointer border-b-2 py-1 text-sm font-medium transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9A3412] ${
+                className={`min-h-[44px] cursor-pointer border-b-2 py-1 text-sm font-medium transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9A3412] ${
                   isActive
                     ? 'border-[#9A3412] text-stone-900'
                     : 'border-transparent text-stone-600 hover:border-stone-300 hover:text-stone-900'
@@ -65,9 +65,9 @@ export function Header({ activeScreen, onNavigate, onExport }: HeaderProps) {
           <button
             type="button"
             onClick={onExport}
-            className="hidden cursor-pointer items-center gap-2 rounded-md bg-[#9A3412] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12] whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9A3412] md:inline-flex"
+            className="hidden min-h-[44px] cursor-pointer items-center gap-2 rounded-md bg-[#9A3412] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12] whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9A3412] md:inline-flex"
           >
-            <Download className="h-4 w-4" aria-hidden="true" />
+            <Download className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>Xuất dữ liệu</span>
           </button>
 

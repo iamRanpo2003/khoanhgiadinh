@@ -138,20 +138,20 @@ export default function App() {
         onExport={handleExport}
       />
 
-      <main className="flex-1">
+      <main className="flex-1 min-w-0">
         {loading ? (
-          <div className="mx-auto max-w-6xl px-4 py-16 text-sm text-stone-600 sm:px-6">
+          <div className="mx-auto max-w-6xl px-4 py-16 text-base text-stone-600 sm:px-6">
             Đang tải dữ liệu kiểm kê từ tulieu.json...
           </div>
         ) : loadError ? (
           <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-            <div role="alert" className="rounded-md border border-red-300 bg-red-50 p-5 text-sm text-red-900">
+            <div role="alert" className="rounded-md border border-red-300 bg-red-50 p-5 text-base text-red-900">
               <p className="font-semibold">Không thể kết nối kho dữ liệu</p>
               <p className="mt-1">{loadError}</p>
               <button
                 type="button"
                 onClick={() => void loadTuLieu()}
-                className="mt-3 cursor-pointer rounded-md border border-red-400 bg-white px-3 py-1.5 text-xs font-medium text-red-900 hover:bg-red-100"
+                className="mt-3 inline-flex min-h-[44px] cursor-pointer items-center rounded-md border border-red-400 bg-white px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-100"
               >
                 Thử tải lại
               </button>
@@ -164,7 +164,6 @@ export default function App() {
                 records={records}
                 onSearchNavigate={handleSearchNavigate}
                 onNavigate={handleNavigate}
-                onOpenIntake={() => setIntakeOpen(true)}
               />
             )}
 

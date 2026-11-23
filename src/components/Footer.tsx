@@ -16,7 +16,7 @@ export function Footer({ onNavigate, onExport, totalRecords }: FooterProps) {
             <p className="font-editorial text-xl font-semibold text-stone-900">
               Kho Ảnh Gia Đình Có Chú Thích
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-stone-600">
+            <p className="mt-2 text-base leading-relaxed text-stone-600">
               Lưu trữ, kiểm kê và trưng bày tư liệu ảnh gia đình theo chuẩn 15 trường Dublin Core, Luật Di sản văn hoá 45/2024/QH15 và Thông tư 05/2025/TT-BVHTTDL.
             </p>
           </div>
@@ -25,7 +25,7 @@ export function Footer({ onNavigate, onExport, totalRecords }: FooterProps) {
             <h2 className="text-xs font-semibold uppercase tracking-widest text-stone-500">
               Quy chuẩn hiển thị tư liệu
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-stone-600">
+            <p className="mt-2 text-base leading-relaxed text-stone-600">
               Chỉ sử dụng ảnh tư liệu thật được chủ sở hữu cho phép. Tuyệt đối không dùng ảnh do máy sinh thay cho hiện vật thật. Bản gốc độ phân giải cao lưu ngoại tuyến; giao diện web hiển thị bản giảm kích thước.
             </p>
           </div>
@@ -33,25 +33,32 @@ export function Footer({ onNavigate, onExport, totalRecords }: FooterProps) {
           <div className="flex flex-col justify-between gap-4">
             <div>
               <h2 className="text-xs font-semibold uppercase tracking-widest text-stone-500">
-                Thao tác kho dữ liệu
+                Liên kết &amp; kho dữ liệu
               </h2>
-              <p className="mt-2 font-mono text-sm text-stone-700 tabular-nums">
+              <p className="mt-2 font-mono text-base text-stone-700 tabular-nums">
                 Số bản ghi hiện có: {totalRecords}
               </p>
             </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => onNavigate('sources')}
+                className="inline-flex min-h-[44px] cursor-pointer items-center rounded-md border border-stone-300 bg-white px-3.5 py-2 text-base font-medium text-[#1E3A8A] underline-offset-4 hover:bg-stone-100 hover:underline whitespace-nowrap shrink-0"
+              >
+                Nguồn và Ghi nhận
+              </button>
               <button
                 type="button"
                 onClick={onExport}
-                className="inline-flex min-h-[40px] cursor-pointer items-center gap-2 rounded-md border border-stone-300 bg-white px-3.5 py-2 text-sm font-medium text-stone-800 hover:bg-stone-100 whitespace-nowrap shrink-0"
+                className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-md border border-stone-300 bg-white px-3.5 py-2 text-base font-medium text-stone-800 hover:bg-stone-100 whitespace-nowrap shrink-0"
               >
-                <Download className="h-4 w-4" aria-hidden="true" />
+                <Download className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>Xuất tulieu.json</span>
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate('about')}
-                className="inline-flex min-h-[40px] cursor-pointer items-center rounded-md px-2 py-2 text-sm font-medium text-[#1E3A8A] underline-offset-4 hover:underline whitespace-nowrap shrink-0"
+                className="inline-flex min-h-[44px] cursor-pointer items-center rounded-md px-3 py-2 text-base font-medium text-[#1E3A8A] underline-offset-4 hover:underline whitespace-nowrap shrink-0"
               >
                 Thông tin thực hiện
               </button>
@@ -59,7 +66,7 @@ export function Footer({ onNavigate, onExport, totalRecords }: FooterProps) {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-2 border-t border-stone-200 pt-6 text-xs text-stone-500 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-2 border-t border-stone-200 pt-6 text-sm text-stone-600 sm:flex-row sm:items-center sm:justify-between">
           <p>
             Sản phẩm thực tập của Nguyễn Viết Hải (PH63500 · Nhóm 01) — Chương trình Thực tập sinh Đợt 15 FPT Polytechnic và IMTA TECH · Dự án xã hội phi lợi nhuận.
           </p>

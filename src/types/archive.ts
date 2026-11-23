@@ -64,12 +64,22 @@ export interface QACitation {
   ma_ban_ghi: string;
   noi_luu_giu: string;
   loai_ban: string;
+  ten_nguon: string;
+}
+
+export interface QASuggestedSource {
+  title: string;
+  issuer: string;
+  year: string;
+  url: string;
 }
 
 export interface QAResponse {
   answer: string;
   hasMatch: boolean;
   citations: QACitation[];
+  usedSources: string[];
+  suggestedSources: QASuggestedSource[];
   totalRecordsChecked: number;
 }
 
@@ -85,6 +95,7 @@ export interface SourceReference {
   id: string;
   title: string;
   issuer: string;
+  year: string;
   category:
     | 'Nguồn tư liệu Hoàng Vân'
     | 'Chính thống (Việt Nam)'

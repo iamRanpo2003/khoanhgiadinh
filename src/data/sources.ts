@@ -1,10 +1,11 @@
-import type { SourceReference } from '../types/archive';
+import type { SourceReference } from '../types/archive.ts';
 
 export const ARCHIVAL_SOURCES: SourceReference[] = [
   {
     id: 'src-hoangvan-org',
     title: 'Trang lưu trữ số chính thức của gia đình nhạc sĩ Hoàng Vân',
     issuer: 'Gia đình nhạc sĩ Hoàng Vân, Hà Nội (TS. Lê Y Linh & Nhạc trưởng Lê Phi Phi)',
+    year: '',
     category: 'Nguồn tư liệu Hoàng Vân',
     effectiveDate: 'Cổng tư liệu gốc công khai đa ngữ',
     summary:
@@ -15,6 +16,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-nhandan-unesco-2025',
     title: 'Báo Nhân Dân – Bản tin chính thức về UNESCO',
     issuer: 'Báo Nhân Dân (Cơ quan Trung ương của Đảng Cộng sản Việt Nam)',
+    year: '2025',
     category: 'Nguồn tư liệu Hoàng Vân',
     effectiveDate: 'Tháng 04/2025',
     summary:
@@ -25,6 +27,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-nhandan-special',
     title: 'Chuyên trang đặc biệt Báo Nhân Dân',
     issuer: 'Báo Nhân Dân — Chuyên trang Vinh danh di sản của vị nhạc sĩ tài hoa',
+    year: '2025',
     category: 'Nguồn tư liệu Hoàng Vân',
     effectiveDate: 'Năm 2025',
     summary:
@@ -35,6 +38,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-ttxvn-hoso',
     title: 'Trung tâm Thông tin Tư liệu và Đồ họa (TTXVN) – Hồ sơ di sản',
     issuer: 'Thông tấn xã Việt Nam (TTXVN)',
+    year: '2025',
     category: 'Nguồn tư liệu Hoàng Vân',
     effectiveDate: 'Hồ sơ Di sản Tư liệu Thế giới năm 2025',
     summary:
@@ -45,6 +49,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-ttxvn-tieusu',
     title: 'Cổng thông tin TTXVN – Tiểu sử và di sản âm nhạc',
     issuer: 'Thông tấn xã Việt Nam (TTXVN)',
+    year: '2025',
     category: 'Nguồn tư liệu Hoàng Vân',
     effectiveDate: 'Kỷ niệm 95 năm ngày sinh nhạc sĩ Hoàng Vân (24/7/1930 – 24/7/2025)',
     summary:
@@ -55,6 +60,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-hoguom-chomuondoisau',
     title: 'Nhà hát Hồ Gươm – Giới thiệu chương trình "Cho muôn đời sau"',
     issuer: 'Nhà hát Hồ Gươm (Bộ Công an)',
+    year: '2025',
     category: 'Nguồn tư liệu Hoàng Vân',
     effectiveDate: 'Tháng 07/2025',
     summary:
@@ -65,6 +71,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-hoguom-chandung',
     title: 'Nhà hát Hồ Gươm – Chân dung âm nhạc',
     issuer: 'Nhà hát Hồ Gươm (Bộ Công an)',
+    year: '2025',
     category: 'Nguồn tư liệu Hoàng Vân',
     effectiveDate: 'Năm 2025',
     summary:
@@ -75,8 +82,8 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-baotintuc-ttxvn',
     title: 'Báo Tin tức (Thông tấn xã Việt Nam)',
     issuer: 'Báo Tin tức — Thông tấn xã Việt Nam',
+    year: '',
     category: 'Nguồn tư liệu Hoàng Vân',
-    effectiveDate: 'Năm 2025',
     summary:
       'Bài viết chuyên đề của Báo Tin tức (TTXVN) về đóng góp đặc biệt của nhạc sĩ Hoàng Vân trong nền âm nhạc cách mạng và chuyên nghiệp Việt Nam.',
     url: 'https://baotintuc.vn/nhac-si-hoang-van-chien-ma-luc-luong-cua-nen-am-nhac-viet-nam-post819619.html',
@@ -85,6 +92,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-luat-di-san-2024',
     title: 'Luật Di sản văn hoá số 45/2024/QH15',
     issuer: 'Quốc hội nước CHXHCN Việt Nam',
+    year: '2024',
     category: 'Chính thống (Việt Nam)',
     effectiveDate: 'Hiệu lực từ 01/07/2025',
     summary:
@@ -95,6 +103,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-thong-tu-05-2025',
     title: 'Thông tư số 05/2025/TT-BVHTTDL quy định chi tiết một số điều của Luật Di sản văn hoá',
     issuer: 'Bộ Văn hoá, Thể thao và Du lịch',
+    year: '2025',
     category: 'Chính thống (Việt Nam)',
     effectiveDate: 'Ban hành 13/05/2025 · Hiệu lực 01/07/2025',
     summary:
@@ -105,6 +114,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-nghi-dinh-308-2025',
     title: 'Nghị định quy định chi tiết thi hành một số điều và biện pháp thi hành Luật Di sản văn hoá (308/2025/NĐ-CP)',
     issuer: 'Chính phủ nước CHXHCN Việt Nam',
+    year: '2025',
     category: 'Chính thống (Việt Nam)',
     effectiveDate: 'Ban hành 28/11/2025 · Hiệu lực 15/01/2026',
     summary:
@@ -115,6 +125,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-luat-bvdlcn-2025',
     title: 'Luật Bảo vệ dữ liệu cá nhân (91/2025/QH15)',
     issuer: 'Quốc hội nước CHXHCN Việt Nam',
+    year: '2025',
     category: 'Chính thống (Việt Nam)',
     effectiveDate: 'Hiệu lực từ 01/01/2026',
     summary:
@@ -125,6 +136,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-qd-2026-ttg',
     title: 'Quyết định số 2026/QĐ-TTg phê duyệt Chương trình số hoá Di sản văn hoá Việt Nam giai đoạn 2021–2030',
     issuer: 'Thủ tướng Chính phủ',
+    year: '2021',
     category: 'Chính thống (Việt Nam)',
     effectiveDate: 'Ban hành 02/12/2021',
     summary:
@@ -135,6 +147,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-cuc-di-san',
     title: 'Cục Di sản Văn hoá — Bộ Văn hoá, Thể thao và Du lịch',
     issuer: 'Bộ Văn hoá, Thể thao và Du lịch',
+    year: '',
     category: 'Chính thống (Việt Nam)',
     summary:
       'Cơ quan quản lý nhà nước công bố thông tin chính thức về các di sản tư liệu Việt Nam được UNESCO ghi danh trong Chương trình Ký ức Thế giới, trong đó có Bộ sưu tập của nhạc sĩ Hoàng Vân (2025).',
@@ -144,6 +157,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-unesco-mow',
     title: 'UNESCO Memory of the World Programme — Hồ sơ Bộ sưu tập của nhạc sĩ Hoàng Vân (2025)',
     issuer: 'UNESCO (Hội đồng Chấp hành ghi danh ngày 10/04/2025)',
+    year: '2025',
     category: 'Chính thống (Quốc tế)',
     effectiveDate: 'Ghi danh Cấp Thế giới năm 2025',
     summary:
@@ -154,6 +168,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-dublin-core',
     title: 'Dublin Core Metadata Element Set (ISO 15836 / DCMI)',
     issuer: 'Dublin Core Metadata Initiative (DCMI)',
+    year: '',
     category: 'Chính thống (Quốc tế)',
     summary:
       'Bộ 15 trường siêu dữ liệu chuẩn quốc tế dùng trong thư viện, bảo tàng và kho lưu trữ số (Title, Creator, Subject, Description, Publisher, Contributor, Date, Type, Format, Identifier, Source, Language, Relation, Coverage, Rights).',
@@ -163,6 +178,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-cuc-van-thu',
     title: 'Cổng thông tin Cục Văn thư và Lưu trữ Nhà nước (Trung tâm Lưu trữ Quốc gia III)',
     issuer: 'Bộ Nội vụ Việt Nam',
+    year: '',
     category: 'Chuẩn & Tham khảo',
     summary:
       'Hướng dẫn nghiệp vụ chỉnh lý, lập danh mục, số hoá tài liệu lưu trữ giấy, ảnh phim và tiếp nhận, bảo quản phông tài liệu cá nhân nhạc sĩ Hoàng Vân tại Trung tâm Lưu trữ Quốc gia III (Hà Nội).',
@@ -172,6 +188,7 @@ export const ARCHIVAL_SOURCES: SourceReference[] = [
     id: 'src-baotang-lichsu',
     title: 'Bảo tàng Lịch sử Quốc gia — Chuẩn biên mục và trưng bày hiện vật',
     issuer: 'Bảo tàng Lịch sử Quốc gia Việt Nam',
+    year: '',
     category: 'Chuẩn & Tham khảo',
     summary:
       'Tài liệu tham khảo về cách ghi phiếu hiện vật, mô tả chất liệu, kích thước, tình trạng bảo quản và dẫn nguồn hiện vật khi trưng bày số.',

@@ -6,7 +6,14 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { GoogleGenAI, Type } from '@google/genai';
 import type { ArchivalRecord, QAResponse, TranscribeResponse, TuLieuDataset } from './src/types/archive.ts';
-import { sanitizeRecordForPublicContext, validateImportedDataset } from './src/utils/archiveLogic.ts';
+import { ARCHIVAL_SOURCES } from './src/data/sources.ts';
+import {
+  finalizeQAResponse,
+  getOfficialSuggestedSources,
+  sanitizeRecordForPublicContext,
+  sanitizeSecretPatterns,
+  validateImportedDataset,
+} from './src/utils/archiveLogic.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,6 +36,31 @@ function getGeminiClient(): GoogleGenAI | null {
       },
     },
   });
+}
+
+function isServiceUnavailableError(error: unknown): boolean {
+  const msg = error instanceof Error ? error.message : String(error ?? '');
+  return msg.includes('"code":503') || msg.includes('UNAVAILABLE') || msg.includes('high demand');
+}
+
+async function generateWithFallback(
+  ai: GoogleGenAI,
+  request: Omit<Parameters<GoogleGenAI['models']['generateContent']>[0], 'model'>
+) {
+  try {
+    return await ai.models.generateContent({
+      model: 'gemini-4-hydrogen',
+      ...request,
+    });
+  } catch (err) {
+    if (isServiceUnavailableError(err)) {
+      return await ai.models.generateContent({
+        model: 'gemini-3.1-flash-lite',
+        ...request,
+      });
+    }
+    throw err;
+  }
 }
 
 async function readTuLieuFile(): Promise<TuLieuDataset> {
@@ -181,9 +213,11 @@ async function createServer() {
       if (dataset.ban_ghi.length === 0) {
         const emptyResponse: QAResponse = {
           answer:
-            'Chưa có tư liệu trong tệp tulieu.json để trả lời câu hỏi này. Hệ thống hiện đang ở trạng thái cấu trúc rỗng chờ nạp dữ liệu và ảnh tư liệu thật từ gia đình.',
+            'Ứng dụng chưa có thông tin này vì tệp tulieu.json hiện chưa có bản ghi nào. Bạn có thể tra cứu trước tại các nguồn chính thống được gợi ý bên dưới.',
           hasMatch: false,
           citations: [],
+          usedSources: ['Kho dữ liệu tulieu.json (0 bản ghi)'],
+          suggestedSources: getOfficialSuggestedSources(ARCHIVAL_SOURCES, 4),
           totalRecordsChecked: 0,
         };
         return res.json(emptyResponse);
@@ -192,16 +226,26 @@ async function createServer() {
       const ai = getGeminiClient();
       if (!ai) {
         return res.status(503).json({
-          error: 'Chưa cấu hình GEMINI_API_KEY trên máy chủ để thực hiện hỏi đáp.',
+          error: 'Chưa cấu hình biến môi trường GEMINI_API_KEY trên máy chủ để thực hiện hỏi đáp.',
         });
       }
 
       const groundedContext = dataset.ban_ghi.map((rec) => sanitizeRecordForPublicContext(rec));
+      const officialLookupCatalog = ARCHIVAL_SOURCES.map((src) => ({
+        title: src.title,
+        issuer: src.issuer,
+        year: src.year,
+        category: src.category,
+        url: src.url,
+      }));
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-4-hydrogen',
-        contents: `DỮ LIỆU TƯ LIỆU (tulieu.json - đã ẩn phần không công bố):\n${JSON.stringify(
+      const response = await generateWithFallback(ai, {
+        contents: `DỮ LIỆU TƯ LIỆU TRONG ỨNG DỤNG (tulieu.json - đã ẩn phần không công bố):\n${JSON.stringify(
           groundedContext,
+          null,
+          2
+        )}\n\nDANH MỤC NGUỒN CHÍNH THỐNG TRONG ỨNG DỤNG:\n${JSON.stringify(
+          officialLookupCatalog,
           null,
           2
         )}\n\nCÂU HỎI CỦA NGƯỜI DÙNG:\n${question.trim()}`,
@@ -209,21 +253,22 @@ async function createServer() {
           systemInstruction:
             'Bạn là trợ lý lưu trữ bảo tàng trả lời câu hỏi bằng tiếng Việt có dấu chuẩn UTF-8. ' +
             'QUY TẮC BẮT BUỘC: ' +
-            '1) Chỉ được trả lời hoàn toàn dựa trên dữ liệu JSON được cung cấp từ tulieu.json. Tuyệt đối không suy đoán, không bịa đặt thông tin ngoài dữ liệu. ' +
-            '2) Nếu thông tin không có trong dữ liệu được cung cấp, phải trả lời rõ là "Chưa có tư liệu" và đặt hasMatch = false, citations = []. ' +
-            '3) Với mỗi thông tin tìm thấy, bắt buộc nêu rõ mã bản ghi (ma_ban_ghi), nơi lưu giữ hiện nay (noi_luu_giu_hien_nay) và loại bản đang hiển thị (loai_ban_dang_hien_thi) cả trong câu trả lời và trong mảng citations. ' +
-            '4) Không được tiết lộ hoặc suy diễn nội dung thuộc phần không công bố.',
+            '1) CHỈ được trả lời dựa trên dữ liệu có sẵn trong tulieu.json và danh mục nguồn chính thống được cung cấp. Tuyệt đối KHÔNG sử dụng kiến thức ngoài dữ liệu này và KHÔNG suy đoán. ' +
+            '2) Nếu dữ liệu trong ứng dụng KHÔNG có thông tin để trả lời câu hỏi, bắt buộc bắt đầu câu trả lời đúng cụm từ: "Ứng dụng chưa có thông tin này", đặt hasMatch = false, citations = [], và chọn từ 2 đến 4 nguồn phù hợp nhất từ DANH MỤC NGUỒN CHÍNH THỐNG TRONG ỨNG DỤNG đưa vào mảng suggestedSources (không tự bịa URL ngoài danh mục). ' +
+            '3) Nếu tìm thấy thông tin trong tulieu.json, đặt hasMatch = true, bắt buộc nêu rõ mã bản ghi (ma_ban_ghi), nơi lưu giữ hiện nay (noi_luu_giu_hien_nay), loại bản đang hiển thị (loai_ban_dang_hien_thi) và TÊN NGUỒN ĐÃ DÙNG (ten_nguon) cả trong nội dung answer, trong từng phần tử citations, lẫn trong mảng usedSources. ' +
+            '4) Không bao giờ tiết lộ hay suy diễn nội dung thuộc phần không công bố hoặc phiên âm chưa kiểm chứng.',
           responseMimeType: 'application/json',
           responseSchema: {
             type: Type.OBJECT,
             properties: {
               answer: {
                 type: Type.STRING,
-                description: 'Câu trả lời tiếng Việt chuẩn, trích dẫn đầy đủ mã bản ghi, nơi lưu giữ và loại bản.',
+                description:
+                  'Câu trả lời tiếng Việt chuẩn. Nếu không có trong dữ liệu, bắt đầu bằng "Ứng dụng chưa có thông tin này" và gợi ý nguồn chính thống.',
               },
               hasMatch: {
                 type: Type.BOOLEAN,
-                description: 'true nếu tìm thấy thông tin trong tulieu.json, false nếu chưa có tư liệu.',
+                description: 'true nếu dữ liệu trong ứng dụng có thông tin trả lời, false nếu không có.',
               },
               citations: {
                 type: Type.ARRAY,
@@ -233,8 +278,27 @@ async function createServer() {
                     ma_ban_ghi: { type: Type.STRING },
                     noi_luu_giu: { type: Type.STRING },
                     loai_ban: { type: Type.STRING },
+                    ten_nguon: { type: Type.STRING },
                   },
                 },
+              },
+              usedSources: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+                description: 'Danh sách tên các nguồn đã sử dụng để tạo câu trả lời.',
+              },
+              suggestedSources: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    title: { type: Type.STRING },
+                    issuer: { type: Type.STRING },
+                    year: { type: Type.STRING },
+                    url: { type: Type.STRING },
+                  },
+                },
+                description: 'Gợi ý nguồn chính thống để tra cứu khi hasMatch = false.',
               },
             },
           },
@@ -242,17 +306,18 @@ async function createServer() {
       });
 
       const parsed = JSON.parse((response.text || '{}').trim()) as Partial<QAResponse>;
-      const result: QAResponse = {
-        answer: parsed.answer || 'Chưa có tư liệu phù hợp trong dữ liệu hiện tại.',
-        hasMatch: Boolean(parsed.hasMatch),
-        citations: Array.isArray(parsed.citations) ? parsed.citations : [],
-        totalRecordsChecked: dataset.ban_ghi.length,
-      };
+      const result = finalizeQAResponse(parsed, dataset.ban_ghi, ARCHIVAL_SOURCES);
       return res.json(result);
     } catch (error) {
-      return res.status(500).json({
-        error: error instanceof Error ? error.message : 'Lỗi máy chủ khi gọi Gemini hỏi đáp.',
-      });
+      if (isServiceUnavailableError(error)) {
+        return res.status(503).json({
+          error: 'Dịch vụ Gemini đang quá tải tạm thời. Vui lòng thử lại sau ít giây.',
+        });
+      }
+      const safeMsg = sanitizeSecretPatterns(
+        error instanceof Error ? error.message : 'Lỗi máy chủ khi gọi Gemini hỏi đáp.'
+      );
+      return res.status(500).json({ error: safeMsg });
     }
   });
 
@@ -298,8 +363,7 @@ async function createServer() {
         });
       }
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-4-hydrogen',
+      const response = await generateWithFallback(ai, {
         contents: {
           parts: [
             {
@@ -353,9 +417,15 @@ async function createServer() {
 
       return res.json(payload);
     } catch (error) {
-      return res.status(500).json({
-        error: error instanceof Error ? error.message : 'Lỗi máy chủ khi đề xuất phiên âm.',
-      });
+      if (isServiceUnavailableError(error)) {
+        return res.status(503).json({
+          error: 'Dịch vụ Gemini đang quá tải tạm thời. Vui lòng thử lại sau ít giây.',
+        });
+      }
+      const safeMsg = sanitizeSecretPatterns(
+        error instanceof Error ? error.message : 'Lỗi máy chủ khi đề xuất phiên âm.'
+      );
+      return res.status(500).json({ error: safeMsg });
     }
   });
 
@@ -385,6 +455,7 @@ async function createServer() {
 }
 
 createServer().catch((err) => {
-  console.error('Failed to start server:', err);
+  const safeErr = sanitizeSecretPatterns(err instanceof Error ? err.message : 'Unknown error');
+  console.error('Failed to start server:', safeErr);
   process.exit(1);
 });
